@@ -7,10 +7,6 @@ from functools import wraps
 from typing import Optional, Tuple
 import json
 import os
-import tempfile
-
-# Global lock for all JSON writes in this process
-_json_write_lock = threading.Lock()
 
 # Custom logging formatter to support colors
 class ColoredFormatter(logging.Formatter):
@@ -147,18 +143,6 @@ def throttle(wait, key_func=None):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ['keys', 'txt']
-
-def safe_write_json(path, data, **dump_kwargs):
-    with _json_write_lock:
-        dirpath = os.path.dirname(path) or "."
-        # Create temporary file in same directory
-        with tempfile.NamedTemporaryFile("w", dir=dirpath, delete=False, encoding="utf-8") as tmp:
-            tmp_path = tmp.name
-            json.dump(data, tmp, ensure_ascii=False, indent=2, **dump_kwargs)
-            tmp.flush()
-            os.fsync(tmp.fileno())  # flush to disk
-        # Atomically replace target file
-        os.replace(tmp_path, path)
 
 def merge_dicts_recursive(source, destination):
     """
