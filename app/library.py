@@ -629,6 +629,7 @@ def get_library_status(title_id):
             version['owned'] = True
         else:
             version['owned'] = False
+        version['display_version'] = titles_lib.get_display_version(version['version'])
 
     library_status = {
         'has_base': title.have_base,
@@ -742,6 +743,7 @@ def generate_library():
                 app_version = int(update_app['app_version'])
                 version_list.append({
                     'version': app_version,
+                    'display_version': titles_lib.get_display_version(app_version),
                     'owned': update_app.get('owned', False),
                     'release_date': version_release_dates.get(app_version, 'Unknown')
                 })
@@ -765,6 +767,7 @@ def generate_library():
                 app_version = int(dlc_app['app_version'])
                 version_list.append({
                     'version': app_version,
+                    'display_version': titles_lib.get_display_version(app_version),
                     'owned': dlc_app.get('owned', False),
                     'release_date': 'Unknown'  # DLC release dates not available in versions_db
                 })

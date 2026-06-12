@@ -135,6 +135,12 @@ def identify_appId(app_id):
     
     return title_id.upper(), app_type
 
+def get_display_version(version: int) -> str:
+    major = (version >> 26) & 0x3F
+    minor = (version >> 20) & 0x3F
+    patch = (version >> 16) & 0xF
+    return f"{major}.{minor}.{patch}"
+
 def load_titledb():
     global _cnmts_db
     global _titles_db
